@@ -250,11 +250,13 @@ bool HeapAllocator::FFree(void* ptr)
     if(!block->MPrev && block-> MNext)
     {
         MUsedList = block->MNext;
+        block->MNext->MPrev = nullptr;
     }
     //is tail
     if(block->MPrev && !block->MNext)
     {
         MUsedListLast = block->MPrev;
+        block->MPrev->MNext = nullptr;
     }
     //is solo
     if(!block->MPrev && !block->MNext)
