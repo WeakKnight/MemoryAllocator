@@ -5,9 +5,7 @@
 //  Created by Knight on 2017/6/14.
 //  Copyright © 2017年 Hermitown Studio. All rights reserved.
 //
-
-#ifndef HeapAllocator_hpp
-#define HeapAllocator_hpp
+#pragma once
 
 #include <stdio.h>
 #include <stack>
@@ -26,6 +24,7 @@ struct BlockDescriptor
     MBase(nullptr),
     MIsFree(true)
     {
+        
     }
 };
 
@@ -85,4 +84,3 @@ private:
     size_t MLargestFreeBlockSize;
 };
 
-#endif /* HeapAllocator_hpp */
