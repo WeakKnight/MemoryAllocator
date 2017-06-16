@@ -306,6 +306,10 @@ void HeapAllocator::FCollect()
                     {
                         currentFreeBlock->MPrev->MNext = nextFreeBlock;
                     }
+                    if(currentFreeBlock == MFreeList)
+                    {
+                        MFreeList = nextFreeBlock;
+                    }
                     //回收被合并的块
                     MBlockPool->FPushBlock(currentFreeBlock);
                 }
