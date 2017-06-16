@@ -266,16 +266,16 @@ bool HeapAllocator::FFree(void* ptr)
     block->MPrev = nullptr;
     block->MNext = nullptr;
     
-    auto currentBlock = MFreeList;
-    do
-    {
-        if (FTryCoalesceTwoBlock(currentBlock, block))
-        {
-            return true;
-        }
-        currentBlock = currentBlock->MNext;
-    }
-    while (currentBlock);
+    // auto currentBlock = MFreeList;
+    // do
+    // {
+    //     if (FTryCoalesceTwoBlock(currentBlock, block))
+    //     {
+    //         return true;
+    //     }
+    //     currentBlock = currentBlock->MNext;
+    // }
+    // while (currentBlock);
     
     FAddBlockToFreeBlockList(block);
     return true;
@@ -406,6 +406,11 @@ void HeapAllocator::FUpdateLargestFreeBlockSize()
 
 BlockDescriptor* HeapAllocator::FFindUsedBlock(void *ptr) const
 {
+    if(!MUsedList)
+    {
+        return nullptr;
+    }
+
     auto currentBlock = MUsedList;
     do
     {
@@ -453,6 +458,7 @@ void HeapAllocator::FAddBlockToFreeBlockList(BlockDescriptor* block)
     else
     {
         FCombineBlock(MFreeListLast, block);
+        MFreeListLast = block;
     }
     
     if(block->MSize > MLargestFreeBlockSize)

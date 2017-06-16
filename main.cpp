@@ -16,11 +16,17 @@ int main(int argc, const char * argv[]) {
     void* heapBase = malloc(heapSize);
     
     auto allocator = HeapAllocator::FCreate(heapBase, heapSize, 100);
-    allocator->FAlloc(50);
-    allocator->FAlloc(150);
-    allocator->FAlloc(250);
-    allocator->FAlloc(100);
     
+    auto a = allocator->FAlloc(50);
+    auto b = allocator->FAlloc(150);
+    auto c = allocator->FAlloc(250);
+    auto d = allocator->FAlloc(100);
+    
+    allocator->FFree(a);
+    allocator->FFree(b);
+    allocator->FFree(c);
+    allocator->FFree(d);
+
     allocator->FCollect();
 
     std::cout << "Largest Free Block Size is"<<allocator->FGetLargestFreeBlock()<<std::endl;
