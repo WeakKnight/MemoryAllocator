@@ -283,78 +283,36 @@ bool HeapAllocator::FFree(void* ptr)
 
 void HeapAllocator::FCollect()
 {
-    //清除AllList
-    if(MAllList)
-    {
-        FCleanList(MAllList);
-    }
-    MAllList = nullptr;
-    MAllListLast = nullptr;
-    //构建AllList
-    auto currentBlock = MFreeList;
+    //先快速排序
+    FQuickSortBlock(MFreeList, MFreeListLast);
+    auto currentFreeBlock = MFreeList;
     do
     {
-        if(currentBlock)
+        if(currentFreeBlock)
         {
-            FCopyBlockToAllBlockList(currentBlock, true);
-            currentBlock = currentBlock->MNext;
+            auto nextFreeBlock = currentFreeBlock->MNext;
+            if(nextFreeBlock)
+            {
+                //如果当前空块和下一块空块相邻,则合并到下一块
+                if(reinterpret_cast<uintptr_t>(currentFreeBlock->MBase) + currentFreeBlock->MSize ==  reinterpret_cast<uintptr_t>(nextFreeBlock->MBase))
+                {
+                    nextFreeBlock->MBase = currentFreeBlock->MBase;
+                    nextFreeBlock->MSize += currentFreeBlock->MSize;
+                    //
+                    nextFreeBlock->MPrev = currentFreeBlock->MPrev;
+                    if(currentFreeBlock->MPrev)
+                    {
+                        currentFreeBlock->MPrev->MNext = nextFreeBlock;
+                    }
+                    //回收被合并的块
+                    MBlockPool->FPushBlock(currentFreeBlock);
+                }
+            }
+            //GO Next
+            currentFreeBlock = nextFreeBlock;
         }
     }
-    while (currentBlock);
-    
-    currentBlock = MUsedList;
-    do
-    {
-        if(currentBlock)
-        {
-            FCopyBlockToAllBlockList(currentBlock, true);
-            currentBlock = currentBlock->MNext;
-        }
-    }
-    while (currentBlock);
-    
-    //至少有一个Block Descriptor
-    assert(MAllList != nullptr && MAllListLast != nullptr);
-    //先快排
-    FQuickSortBlock(MAllList, MAllListLast);
-    //遍历MAllList，如果相邻的碎片都已经释放，则合并碎片
-    
-}
-
-void HeapAllocator::FCleanList(BlockDescriptor* block)
-{
-    auto next = block->MNext;
-    MBlockPool->FPushBlock(block);
-    if(next)
-    {
-        FCleanList(next);
-    }
-}
-
-void HeapAllocator::FCopyBlockToAllBlockList(BlockDescriptor* block, bool isFree)
-{
-    auto CopyBlockToTarget = [](BlockDescriptor* block, BlockDescriptor* target)
-    {
-        target->MBase = block->MBase;
-        target->MSize = block->MSize;
-    };
-    
-    //如果AllList不存在，则创建AllList
-    if(!MAllListLast)
-    {
-        MAllList = MBlockPool->FPopBlock();
-        MAllList->MIsFree = isFree;
-        CopyBlockToTarget(block, MAllList);
-        MAllListLast = MAllList;
-    }
-    //AllList存在，则拷贝并链接到AllList
-    else
-    {
-        MAllListLast->MNext = MBlockPool->FPopBlock();
-        MAllListLast->MNext->MIsFree = isFree;
-        CopyBlockToTarget(block, MAllList->MNext);
-        MAllListLast = MAllListLast->MNext;
-    }
+    while(currentFreeBlock);
 }
 
 bool HeapAllocator::FContain(void* ptr) const

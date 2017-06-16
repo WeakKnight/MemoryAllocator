@@ -28,8 +28,6 @@ struct BlockDescriptor
     }
 };
 
-void FQuickSortBlock(BlockDescriptor* blockPtr);
-
 class BlockPool
 {
 public:
@@ -62,9 +60,6 @@ public:
     BlockDescriptor* MUsedList;
     BlockDescriptor* MUsedListLast;
     
-    BlockDescriptor* MAllList;
-    BlockDescriptor* MAllListLast;
-    
 private:
     BlockPool* MBlockPool;
     void FCombineBlock(BlockDescriptor* a, BlockDescriptor* b);
@@ -73,8 +68,6 @@ private:
     BlockDescriptor* FFindUsedBlock(void* ptr) const;
     bool FTryCoalesceTwoBlock(BlockDescriptor* freeblock, BlockDescriptor* addingBlock);
     void FAddBlockToFreeBlockList(BlockDescriptor* block);
-    void FCopyBlockToAllBlockList(BlockDescriptor* block, bool isFree);
-    void FCleanList(BlockDescriptor* block);
     
 private:
     //HEAP起点的内存地址

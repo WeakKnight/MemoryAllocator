@@ -21,6 +21,8 @@ int main(int argc, const char * argv[]) {
     allocator->FAlloc(250);
     allocator->FAlloc(100);
     
+    allocator->FCollect();
+
     std::cout << "Largest Free Block Size is"<<allocator->FGetLargestFreeBlock()<<std::endl;
     std::cout << "Free Size is"<<allocator->FGetFreeMemory()<<std::endl;
     return 0;
