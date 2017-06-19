@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 include(CTest)
 enable_testing()
 
-add_library(MemoryAllocator HeapAllocator.cpp)
+add_library(MemoryAllocator HeapAllocator.cpp BitArray.cpp FixedSizeAllocator.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
