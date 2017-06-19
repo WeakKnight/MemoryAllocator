@@ -1,11 +1,14 @@
 #pragma once
 
 #include <stdio.h>
+#include <stdlib.h>
+
+class HeapAllocator;
 
 class BitArray
 {
 public:
-    static BitArray* FCreate();
+    static BitArray* FCreate(HeapAllocator* heapAllocator, size_t bitNum);
     ~BitArray();
 
     void FClearAll();
@@ -24,4 +27,8 @@ public:
     bool FGetFirstSetBit(size_t& bitNumber) const;
 
     bool operator[](size_t index) const;
+
+private:
+    uintptr_t* MBase;
+    size_t MBitNum;
 };
