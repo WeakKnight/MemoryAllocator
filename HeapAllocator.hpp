@@ -46,6 +46,7 @@ public:
     static HeapAllocator* FCreate(void* base, size_t size, size_t blockNum);
     void FDestroy();
     void* FAlloc(size_t size);
+    //TODO current useless for me
     void* FAlloc(size_t size, unsigned int alignment);
     bool FFree(void* ptr);
     void FCollect();

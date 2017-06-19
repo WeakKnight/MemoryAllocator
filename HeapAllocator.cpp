@@ -20,15 +20,21 @@ void FQuickSortBlock(BlockDescriptor* start, BlockDescriptor* end)
             if(reinterpret_cast<uintptr_t>(j->MBase) <= x)
             {
                 i = (i==nullptr)?start:i->MNext;
-                auto temp = i->MBase;
+                auto tempBase = i->MBase;
+                auto tempSize = i->MSize;
                 i->MBase = j->MBase;
-                j->MBase = temp;
+                i->MSize = j->MSize;
+                j->MBase = tempBase;
+                j->MSize = tempSize;
             }
         }
         i = (i == nullptr)? start:i->MNext;
-        auto temp = i->MBase;
+        auto tempBase = i->MBase;
+        auto tempSize = i->MSize;
         i->MBase = end->MBase;
-        end->MBase = temp;
+        i->MSize = end->MSize;
+        end->MBase = tempBase;
+        end->MSize = tempSize;
         FQuickSortBlock(start, i->MPrev);
         FQuickSortBlock(i->MNext, end);
     }
@@ -319,6 +325,7 @@ void HeapAllocator::FCollect()
         }
     }
     while(currentFreeBlock);
+    FUpdateLargestFreeBlockSize();
 }
 
 bool HeapAllocator::FContain(void* ptr) const
