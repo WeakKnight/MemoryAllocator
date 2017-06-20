@@ -8,7 +8,7 @@ class HeapAllocator;
 class BitArray
 {
 public:
-    static BitArray* FCreate(HeapAllocator* heapAllocator, size_t bitNum);
+    static BitArray* FCreate(HeapAllocator* heapAllocator, size_t bitCount);
     ~BitArray();
 
     void FClearAll();
@@ -29,6 +29,9 @@ public:
     bool operator[](size_t index) const;
 
 private:
-    uintptr_t* MBase;
-    size_t MBitNum;
+    uint8_t* MBase;
+    size_t MBitCount;
+    size_t MByteCount;
+    size_t MSetCount;
+    HeapAllocator* MHeapAllocator;
 };

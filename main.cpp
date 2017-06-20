@@ -11,7 +11,7 @@
 #include "HeapAllocator.hpp"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
+    //1mb
     size_t heapSize = 1024 * 1024;
     void* heapBase = malloc(heapSize);
     
