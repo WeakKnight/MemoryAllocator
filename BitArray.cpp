@@ -3,7 +3,7 @@
 #include <mm_malloc.h>
 #include <assert.h>
 
-#define BIT_PER_BYTE 8
+
 
 BitArray* BitArray::FCreate(HeapAllocator* heapAllocator, size_t bitCount)
 {
@@ -48,27 +48,9 @@ bool BitArray::FAreAllSet() const
     return MSetCount == MBitCount;
 }
 
-inline bool BitArray::FISBitSet(size_t bitNumber) const
-{
-    int index = bitNumber /BIT_PER_BYTE;
-    unsigned char offset = index % BIT_PER_BYTE;
-    auto byte = MBase[index];
-    
-    if ((byte & (1 << (offset))) == 0x00)
-    {
-        return false;
-    }
-    return true;
-}
-
-inline bool BitArray::FIsBitClear(size_t bitNumber) const
-{
-    return !FISBitSet(bitNumber);
-}
-
 void BitArray::FSetBit(size_t bitNumber)
 {
-    if(FISBitSet(bitNumber))
+    if(FIsBitSet(bitNumber))
     {
         return;
     }
@@ -149,6 +131,6 @@ bool BitArray::FGetFirstSetBit(size_t& bitNumber) const
 
 bool BitArray::operator[](size_t index) const
 {
-    return FISBitSet(index);
+    return FIsBitSet(index);
 }
 

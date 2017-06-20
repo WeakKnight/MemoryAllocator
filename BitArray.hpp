@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define BIT_PER_BYTE 8
+
 class HeapAllocator;
 
 class BitArray
@@ -17,7 +19,7 @@ public:
     bool FAreAllClear() const;
     bool FAreAllSet() const;
 
-    inline bool FISBitSet(size_t bitNumber) const;
+    inline bool FIsBitSet(size_t bitNumber) const;
     inline bool FIsBitClear(size_t bitNumber) const;
 
     void FSetBit(size_t bitNumber);
@@ -35,3 +37,29 @@ private:
     size_t MSetCount;
     HeapAllocator* MHeapAllocator;
 };
+
+inline bool BitArray::FIsBitSet(size_t bitNumber) const
+{
+    int index = bitNumber /BIT_PER_BYTE;
+    unsigned char offset = index % BIT_PER_BYTE;
+    auto byte = MBase[index];
+    
+    if ((byte & (1 << (offset))) == 0x00)
+    {
+        return false;
+    }
+    return true;
+}
+
+inline bool BitArray::FIsBitClear(size_t bitNumber) const
+{
+    int index = bitNumber /BIT_PER_BYTE;
+    unsigned char offset = index % BIT_PER_BYTE;
+    auto byte = MBase[index];
+    
+    if ((byte & (1 << (offset))) == 0x00)
+    {
+        return true;
+    }
+    return false;
+}
