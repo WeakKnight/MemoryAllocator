@@ -50,11 +50,8 @@ bool BitArray::FAreAllSet() const
 
 inline bool BitArray::FISBitSet(size_t bitNumber) const
 {
-    //求bitNumber位于第几个字节
     int index = bitNumber /BIT_PER_BYTE;
-    //求bitNumber在目标字节内的偏移
     unsigned char offset = index % BIT_PER_BYTE;
-    //获得对应的byte
     auto byte = MBase[index];
     
     if ((byte & (1 << (offset))) == 0x00)
@@ -75,11 +72,9 @@ void BitArray::FSetBit(size_t bitNumber)
     {
         return;
     }
-    //求bitNumber位于第几个字节
+
     int index = bitNumber /BIT_PER_BYTE;
-    //求bitNumber在目标字节内的偏移
     unsigned char offset = bitNumber % BIT_PER_BYTE;
-    //获得对应的byte
     auto byte = MBase[index];
     byte = byte | (1<< (offset));
     MBase[index] = byte;
@@ -92,11 +87,9 @@ void BitArray::FClearBit(size_t bitNumber)
     {
         return;
     }
-    //求bitNumber位于第几个字节
+
     int index = bitNumber /BIT_PER_BYTE;
-    //求bitNumber在目标字节内的偏移
     unsigned char offset = bitNumber % BIT_PER_BYTE;
-    //获得对应的byte
     auto byte = MBase[index];
     MBase[index] = ~((~byte) | (1<< (offset)));
     MSetCount -= 1;

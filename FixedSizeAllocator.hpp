@@ -11,9 +11,9 @@ public:
 
     static FixedSizeAllocator* FCreate(HeapAllocator* heapAllocator, size_t blockSize, size_t blockNum);
     inline void *FAlloc();
-	inline bool FFree(const void *i_ptr);
-	inline bool FContains(const void * i_ptr) const;
-    inline bool FIsAllocated(const void * i_ptr) const;
+	inline bool FFree(const void* ptr);
+	inline bool FContains(const void* ptr) const;
+    inline bool FIsAllocated(const void* ptr) const;
 
 private:
 
