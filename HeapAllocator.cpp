@@ -328,7 +328,7 @@ void HeapAllocator::FCollect()
     FUpdateLargestFreeBlockSize();
 }
 
-bool HeapAllocator::FContain(void* ptr) const
+bool HeapAllocator::FContains(void* ptr) const
 {
     if(reinterpret_cast<uintptr_t>(ptr) >= reinterpret_cast<uintptr_t>(MBasePtr) && reinterpret_cast<uintptr_t>(ptr) <= reinterpret_cast<uintptr_t>(MBasePtr) + MSize)
     {
@@ -340,7 +340,7 @@ bool HeapAllocator::FContain(void* ptr) const
 bool HeapAllocator::FIsAllocated(void* ptr) const
 {
     //如果不在堆内存中，肯定不是已分配
-    if(!FContain(ptr))
+    if(!FContains(ptr))
     {
         return false;
     }

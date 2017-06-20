@@ -50,7 +50,7 @@ public:
     void* FAlloc(size_t size, unsigned int alignment);
     bool FFree(void* ptr);
     void FCollect();
-    bool FContain(void* ptr) const;
+    bool FContains(void* ptr) const;
     bool FIsAllocated(void* ptr) const;
     size_t FGetLargestFreeBlock() const;
     size_t FGetFreeMemory() const;
