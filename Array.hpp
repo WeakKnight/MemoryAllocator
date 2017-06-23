@@ -11,9 +11,11 @@ public:
 	const T& operator[](size_t index) const;
 	Array<T>& operator=(const Array<T>& other);
 public:
-    inline bool empty(const Array<T>& a);
+    inline bool FEmpty(const Array<T>& a);
+    inline void FResize(size_t size);
 
 private:
+    inline void FSetCapacity(size_t size);
     size_t MSize;
     size_t MCapacity;
     T* MData;
@@ -51,11 +53,22 @@ template<typename T>
 Array<T>& Array<T>::operator=(const Array<T>& other)
 {
     MSize = other.MSize;
-    MCapacity = other.MCapacity;
 }
 
 template<typename T>
-inline bool Array<T>::empty(const Array<T>& a)
+inline bool Array<T>::FEmpty(const Array<T>& a)
 {
-    return true;
+    return (MSize == 0);
+}
+
+template<typename T>
+inline void Array<T>::FResize(size_t size)
+{
+
+}
+
+template<typename T>
+inline void Array<T>::FSetCapacity(size_t size)
+{
+    
 }
