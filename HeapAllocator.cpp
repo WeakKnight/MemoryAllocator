@@ -11,7 +11,7 @@
 
 void FQuickSortBlock(BlockDescriptor* start, BlockDescriptor* end)
 {
-    if(end != nullptr && start != end && start != end->MNext)
+    if(end != NULL && start != end && start != end->MNext)
     {
         unsigned long x = reinterpret_cast<uintptr_t>(end->MBase);
         BlockDescriptor* i = start->MPrev;
@@ -19,18 +19,18 @@ void FQuickSortBlock(BlockDescriptor* start, BlockDescriptor* end)
         {
             if(reinterpret_cast<uintptr_t>(j->MBase) <= x)
             {
-                i = (i==nullptr)?start:i->MNext;
-                auto tempBase = i->MBase;
-                auto tempSize = i->MSize;
+                i = (i==NULL)?start:i->MNext;
+                void* tempBase = i->MBase;
+                size_t tempSize = i->MSize;
                 i->MBase = j->MBase;
                 i->MSize = j->MSize;
                 j->MBase = tempBase;
                 j->MSize = tempSize;
             }
         }
-        i = (i == nullptr)? start:i->MNext;
-        auto tempBase = i->MBase;
-        auto tempSize = i->MSize;
+        i = (i == NULL)? start:i->MNext;
+        void* tempBase = i->MBase;
+        size_t tempSize = i->MSize;
         i->MBase = end->MBase;
         i->MSize = end->MSize;
         end->MBase = tempBase;
@@ -42,12 +42,23 @@ void FQuickSortBlock(BlockDescriptor* start, BlockDescriptor* end)
 
 BlockPool* BlockPool::FCreate(size_t size)
 {
-    auto result = new BlockPool();
+    BlockPool* result = new BlockPool();
     result->MSize = size;
     for (int index = 0; index < size; index++)
     {
-        auto block = new BlockDescriptor();
-        result->MPool.push(block);
+        BlockDescriptor* block = new BlockDescriptor();
+        //result->MPool.push(block);
+        if (!result->MPoolList)
+        {
+            result->MPoolList = block;
+            result->MPoolListLast = block;
+        }
+        else
+        {
+            result->MPoolListLast->MNext = block;
+            block->MPrev = result->MPoolListLast;
+            result->MPoolListLast = block;
+        }
     }
     
     return result;
@@ -56,27 +67,49 @@ BlockPool* BlockPool::FCreate(size_t size)
 BlockDescriptor* BlockPool::FPopBlock()
 {
     //如果出现size为0的情况说明需要给HeapAllocator声明更大的block num
-    assert(MPool.size() != 0);
-    auto result = MPool.top();
-    MPool.pop();
+    assert(MPoolListLast != NULL);
+    BlockDescriptor* result = MPoolListLast;
+    //update Pool List
+    MPoolListLast = MPoolListLast->MPrev;
+    MPoolListLast->MNext = NULL;
+    if(MPoolListLast == NULL)
+    {
+        MPoolList = NULL;
+    }
+    //clean result
+    result->MPrev = NULL;
+    result->MNext = NULL;
+
     return result;
 }
 
 void BlockPool::FPushBlock(BlockDescriptor* block)
 {
     //clean
-    block->MNext = nullptr;
-    block->MPrev = nullptr;
-    block->MBase = nullptr;
+    block->MNext = NULL;
+    block->MPrev = NULL;
+    block->MBase = NULL;
     block->MSize = 0;
     block->MIsFree = true;
     
-    MPool.push(block);
+    if(MPoolList == NULL)
+    {
+        MPoolList = block;
+        MPoolListLast = block;
+    }
+    else
+    {
+        MPoolListLast->MNext = block;
+        block->MPrev = MPoolListLast;
+        MPoolListLast = block;
+    }
+
+    //MPool.push(block);
 }
 
 HeapAllocator* HeapAllocator::FCreate(void* base, size_t size, size_t blockNum)
 {
-    auto result = new HeapAllocator();
+    HeapAllocator* result = new HeapAllocator();
     result->MBasePtr = base;
     result->MSize = size;
     
@@ -84,13 +117,13 @@ HeapAllocator* HeapAllocator::FCreate(void* base, size_t size, size_t blockNum)
     
     result->MFreeList = result->MBlockPool->FPopBlock();
     result->MFreeList->MBase = base;
-    result->MFreeList->MPrev = nullptr;
-    result->MFreeList->MNext = nullptr;
+    result->MFreeList->MPrev = NULL;
+    result->MFreeList->MNext = NULL;
     result->MFreeList->MSize = size;
     result->MFreeListLast = result->MFreeList;
     
-    result->MUsedList = nullptr;
-    result->MUsedListLast = nullptr;
+    result->MUsedList = NULL;
+    result->MUsedListLast = NULL;
     
     result->MLargestFreeBlockSize = size;
     result->MFreeSize = size;
@@ -107,15 +140,15 @@ void* HeapAllocator::FAlloc(size_t size)
     //不应该分配一块大小为0的内存
     assert(size != 0);
     //FreeList已经为空，直接返回空指针
-    if(MFreeList == nullptr)
+    if(MFreeList == NULL)
     {
-        return nullptr;
+        return NULL;
     }
     
     //总可用内存不足，直接返回空指针
     if (FGetFreeMemory() < size)
     {
-        return nullptr;
+        return NULL;
     }
     
     //最大块不够大，整理一次再分配
@@ -124,7 +157,7 @@ void* HeapAllocator::FAlloc(size_t size)
         FCollect();
         if(FGetLargestFreeBlock() < size)
         {
-            return nullptr;
+            return NULL;
         }
     }
     
@@ -158,7 +191,7 @@ void* HeapAllocator::FAlloc(size_t size)
                 else
                 {
                     //从FreeList移除该节点，并且更新尾节点
-                    currentFreeBlock->MPrev->MNext = nullptr;
+                    currentFreeBlock->MPrev->MNext = NULL;
                     MFreeListLast = currentFreeBlock->MPrev;
                     
                     FAddFreeBlockToUsedBlockList(currentFreeBlock);
@@ -185,8 +218,8 @@ void* HeapAllocator::FAlloc(size_t size)
                 //也不存在子节点
                 else
                 {
-                    MFreeList = nullptr;
-                    MFreeListLast = nullptr;
+                    MFreeList = NULL;
+                    MFreeListLast = NULL;
                     
                     FAddFreeBlockToUsedBlockList(currentFreeBlock);
                     if(shouldUpdateLargestSize)
@@ -227,18 +260,18 @@ void* HeapAllocator::FAlloc(size_t size)
     
     //所有内存不足情况应该在开始就做了处理，不应该走到这里
     assert(true);
-    return nullptr;
+    return NULL;
 }
 
 //TODO
 void* HeapAllocator::FAlloc(size_t size, unsigned int alignment)
 {
-    return nullptr;
+    return NULL;
 }
 
 bool HeapAllocator::FFree(void* ptr)
 {
-    auto block = FFindUsedBlock(ptr);
+    BlockDescriptor* block = FFindUsedBlock(ptr);
     if(!block)
     {
         //尝试释放未通过该HeapAllocator分配的内存
@@ -256,23 +289,23 @@ bool HeapAllocator::FFree(void* ptr)
     if(!block->MPrev && block-> MNext)
     {
         MUsedList = block->MNext;
-        block->MNext->MPrev = nullptr;
+        block->MNext->MPrev = NULL;
     }
     //is tail
     if(block->MPrev && !block->MNext)
     {
         MUsedListLast = block->MPrev;
-        block->MPrev->MNext = nullptr;
+        block->MPrev->MNext = NULL;
     }
     //is solo
     if(!block->MPrev && !block->MNext)
     {
-        MUsedListLast = nullptr;
-        MUsedList = nullptr;
+        MUsedListLast = NULL;
+        MUsedList = NULL;
     }
     
-    block->MPrev = nullptr;
-    block->MNext = nullptr;
+    block->MPrev = NULL;
+    block->MNext = NULL;
     
     // auto currentBlock = MFreeList;
     // do
@@ -293,12 +326,12 @@ void HeapAllocator::FCollect()
 {
     //先快速排序
     FQuickSortBlock(MFreeList, MFreeListLast);
-    auto currentFreeBlock = MFreeList;
+    BlockDescriptor* currentFreeBlock = MFreeList;
     do
     {
         if(currentFreeBlock)
         {
-            auto nextFreeBlock = currentFreeBlock->MNext;
+            BlockDescriptor* nextFreeBlock = currentFreeBlock->MNext;
             if(nextFreeBlock)
             {
                 //如果当前空块和下一块空块相邻,则合并到下一块
@@ -345,7 +378,7 @@ bool HeapAllocator::FIsAllocated(void* ptr) const
         return false;
     }
     
-    auto currentBlock = MUsedList;
+    BlockDescriptor* currentBlock = MUsedList;
     do
     {
         if (currentBlock->MBase == ptr)
@@ -383,14 +416,14 @@ void HeapAllocator::FCombineBlock(BlockDescriptor* a, BlockDescriptor* b)
 
 void HeapAllocator::FAddFreeBlockToUsedBlockList(BlockDescriptor* block)
 {
-    block->MPrev = nullptr;
-    block->MNext = nullptr;
+    block->MPrev = NULL;
+    block->MNext = NULL;
     //标记为已经被使用
     block->MIsFree = false;
     
-    if (MUsedListLast == nullptr || MUsedList == nullptr)
+    if (MUsedListLast == NULL || MUsedList == NULL)
     {
-        assert(MUsedList == nullptr && MUsedListLast == nullptr);
+        assert(MUsedList == NULL && MUsedListLast == NULL);
         MUsedList = block;
         MUsedListLast = block;
     }
@@ -404,7 +437,7 @@ void HeapAllocator::FAddFreeBlockToUsedBlockList(BlockDescriptor* block)
 void HeapAllocator::FUpdateLargestFreeBlockSize()
 {
     size_t largestSize = 0;
-    auto currentBlock = MFreeList;
+    BlockDescriptor* currentBlock = MFreeList;
     do
     {
         if (currentBlock->MSize > largestSize)
@@ -421,10 +454,10 @@ BlockDescriptor* HeapAllocator::FFindUsedBlock(void *ptr) const
 {
     if(!MUsedList)
     {
-        return nullptr;
+        return NULL;
     }
 
-    auto currentBlock = MUsedList;
+    BlockDescriptor* currentBlock = MUsedList;
     do
     {
         if(currentBlock->MBase == ptr)
@@ -435,7 +468,7 @@ BlockDescriptor* HeapAllocator::FFindUsedBlock(void *ptr) const
     }
     while (currentBlock);
     
-    return nullptr;
+    return NULL;
 }
 
 bool HeapAllocator::FTryCoalesceTwoBlock(BlockDescriptor* freeblock, BlockDescriptor* addingBlock)
@@ -462,9 +495,9 @@ void HeapAllocator::FAddBlockToFreeBlockList(BlockDescriptor* block)
 {
     //标记为可用
     block->MIsFree = true;
-    if(MFreeListLast == nullptr)
+    if(MFreeListLast == NULL)
     {
-        assert(MFreeList == nullptr);
+        assert(MFreeList == NULL);
         MFreeList = block;
         MFreeListLast = block;
     }

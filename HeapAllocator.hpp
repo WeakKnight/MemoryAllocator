@@ -8,7 +8,8 @@
 #pragma once
 
 #include <stdio.h>
-#include <stack>
+//#include <cstddef>
+//#include <stack>
 
 struct BlockDescriptor
 {
@@ -18,10 +19,10 @@ struct BlockDescriptor
     void* MBase;
     bool MIsFree;
     BlockDescriptor():
-    MPrev(nullptr),
-    MNext(nullptr),
+    MPrev(NULL),
+    MNext(NULL),
     MSize(0),
-    MBase(nullptr),
+    MBase(NULL),
     MIsFree(true)
     {
         
@@ -36,8 +37,10 @@ public:
     void FPushBlock(BlockDescriptor* block);
     
 private:
-    std::stack<BlockDescriptor*> MPool;
+    //std::stack<BlockDescriptor*> MPool;
     size_t MSize;
+    BlockDescriptor* MPoolList;
+    BlockDescriptor* MPoolListLast;
 };
 
 class HeapAllocator

@@ -1,9 +1,7 @@
 #include "BitArray.hpp"
 #include "HeapAllocator.hpp"
-#include <mm_malloc.h>
 #include <assert.h>
-
-
+#include <string.h>
 
 BitArray* BitArray::FCreate(HeapAllocator* heapAllocator, size_t bitCount)
 {

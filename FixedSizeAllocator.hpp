@@ -2,8 +2,6 @@
 
 #include <stdio.h>
 #include "BitArray.hpp"
-#include <stdlib.h>
-#include <cstddef>
 
 class HeapAllocator;
 
@@ -35,7 +33,7 @@ inline void* FixedSizeAllocator::FAlloc()
         return reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(this->MBase) + (bitNum * MBlockSize));
     }
     
-    return nullptr;
+    return NULL;
 }
 
 inline bool FixedSizeAllocator::FFree(const void* ptr)
@@ -50,8 +48,8 @@ inline bool FixedSizeAllocator::FFree(const void* ptr)
         return false;
     }
 
-    auto offset = reinterpret_cast<uintptr_t>(ptr) - reinterpret_cast<uintptr_t>(MBase);
-    auto index = offset / MBlockSize;
+    unsigned long offset = reinterpret_cast<uintptr_t>(ptr) - reinterpret_cast<uintptr_t>(MBase);
+    unsigned long index = offset / MBlockSize;
     MBitArray->FClearBit(index);
     return true;
 }
@@ -68,7 +66,7 @@ inline bool FixedSizeAllocator::FContains(const void* ptr) const
 
 inline bool FixedSizeAllocator::FIsAllocated(const void* ptr) const
 {
-    auto offset = reinterpret_cast<uintptr_t>(ptr) - reinterpret_cast<uintptr_t>(MBase);
+    unsigned long offset = reinterpret_cast<uintptr_t>(ptr) - reinterpret_cast<uintptr_t>(MBase);
     size_t index = offset / MBlockSize;
     return MBitArray->FIsBitSet(index);
 }
