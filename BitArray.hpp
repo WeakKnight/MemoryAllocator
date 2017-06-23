@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #define BIT_PER_BYTE 8
@@ -42,7 +41,7 @@ inline bool BitArray::FIsBitSet(size_t bitNumber) const
 {
     int index = bitNumber /BIT_PER_BYTE;
     unsigned char offset = index % BIT_PER_BYTE;
-    auto byte = MBase[index];
+    uint8_t byte = MBase[index];
     
     if ((byte & (1 << (offset))) == 0x00)
     {
@@ -55,7 +54,7 @@ inline bool BitArray::FIsBitClear(size_t bitNumber) const
 {
     int index = bitNumber /BIT_PER_BYTE;
     unsigned char offset = index % BIT_PER_BYTE;
-    auto byte = MBase[index];
+    uint8_t byte = MBase[index];
     
     if ((byte & (1 << (offset))) == 0x00)
     {

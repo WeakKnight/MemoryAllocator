@@ -10,6 +10,7 @@ public:
     inline static void FInitInstance();
     inline static HeapManager* FGetInstance();
     void* FAlloc(size_t size);
+    void* FAlloc(size_t size, unsigned int alignment);
     bool FFree(void* ptr);
     
 private:

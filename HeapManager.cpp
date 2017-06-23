@@ -1,7 +1,7 @@
 #include "HeapManager.hpp"
 #include <stdlib.h>
 
-HeapManager* HeapManager::MInstance = nullptr;
+HeapManager* HeapManager::MInstance = NULL;
 
 void* HeapManager::FAlloc(size_t size)
 {
@@ -27,6 +27,11 @@ void* HeapManager::FAlloc(size_t size)
     }
 
     return MHeapAllocator->FAlloc(size);
+}
+
+void* HeapManager::FAlloc(size_t size, unsigned int alignment)
+{
+    return MHeapAllocator->FAlloc(size, alignment);
 }
 
 bool HeapManager::FFree(void* ptr)

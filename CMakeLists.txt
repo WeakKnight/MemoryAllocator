@@ -9,7 +9,7 @@ SET(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
 include(CTest)
 enable_testing()
 
-add_library(HeapManager HeapAllocator.cpp BitArray.cpp FixedSizeAllocator.cpp HeapManager.cpp)
+add_library(HeapManager HeapAllocator.cpp BitArray.cpp FixedSizeAllocator.cpp HeapManager.cpp Array.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
