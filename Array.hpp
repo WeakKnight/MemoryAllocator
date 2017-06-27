@@ -2,17 +2,19 @@
 #include "HeapManager.hpp"
 
 template<typename T>
-class Array
+class TArray
 {
 public:
-    Array(size_t capacity);
-    ~Array();
+    TArray(size_t capacity);
+    ~TArray();
     T& operator[](size_t index);
 	const T& operator[](size_t index) const;
-	Array<T>& operator=(const Array<T>& other);
+	TArray<T>& operator=(const TArray<T>& other);
+
 public:
-    inline bool FEmpty(const Array<T>& a);
-    inline void FResize(size_t size);
+    inline bool FEmpty(const TArray<T>& a);
+    inline void FSetSize(size_t size);
+    inline size_t FGetSize();
 
 private:
     inline void FSetCapacity(size_t size);
@@ -22,53 +24,82 @@ private:
 };
 
 template<typename T>
-Array<T>::Array(size_t capacity)
+TArray<T>::TArray(size_t capacity)
 :
 MCapacity(capacity),
 MSize(0),
 MData(NULL)
 {
-    MData = HeapManager::FGetInstance()->FAlloc(capacity * sizeof(T), alignof(T));
+    MData = reinterpret_cast<T*>(HeapManager::FGetInstance()->FAlloc(capacity * sizeof(T), alignof(T)));
 }
 
 template<typename T>
-Array<T>::~Array()
+TArray<T>::~TArray()
 {
     HeapManager::FGetInstance()->FFree(MData);
 }
 
 template<typename T>
-T& Array<T>::operator[](size_t index)
+T& TArray<T>::operator[](size_t index)
 {
+    assert(index < MSize);
     return MData[index];
 }
 
 template<typename T>
-const T& Array<T>::operator[](size_t index) const
+const T& TArray<T>::operator[](size_t index) const
 {
+    assert(index < MSize);
     return MData[index];
 }
 
 template<typename T>
-Array<T>& Array<T>::operator=(const Array<T>& other)
+TArray<T>& TArray<T>::operator=(const TArray<T>& other)
 {
     MSize = other.MSize;
 }
 
 template<typename T>
-inline bool Array<T>::FEmpty(const Array<T>& a)
+inline bool TArray<T>::FEmpty(const TArray<T>& a)
 {
     return (MSize == 0);
 }
 
 template<typename T>
-inline void Array<T>::FResize(size_t size)
+inline void TArray<T>::FSetSize(size_t size)
 {
-
+    //if capacity is not enough
+    if(size > MCapacity)
+    {
+        FSetCapacity(2 * size + 1);
+    }
+    MSize = size;
 }
 
 template<typename T>
-inline void Array<T>::FSetCapacity(size_t size)
+inline void TArray<T>::FSetCapacity(size_t capacity)
 {
-    
+    //change nothing, do nothing
+    if(capacity == MCapacity)
+    {
+        return;
+    }
+    //capacity smaller than MCapacity, need clip MSize
+    if(capacity < MCapacity)
+    {
+        MSize = capacity;
+    }
+    //update capacity
+    MCapacity = capacity;
+    //re alloc memory
+    void* tempData = HeapManager::FGetInstance()->FAlloc(capacity * sizeof(T), alignof(T));
+    memset(MData, tempData, capacity);
+    HeapManager::FGetInstance()->FFree(MData);
+    MData = reinterpret_cast<T*>(tempData);
+}
+
+template<typename T>
+inline size_t TArray<T>::FGetSize()
+{
+    return MSize;
 }
