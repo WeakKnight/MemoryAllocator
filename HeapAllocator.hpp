@@ -13,71 +13,68 @@
 
 struct BlockDescriptor
 {
-    BlockDescriptor* MPrev;
-    BlockDescriptor* MNext;
+    BlockDescriptor *MPrev;
+    BlockDescriptor *MNext;
     size_t MSize;
-    void* MBase;
+    void *MBase;
     bool MIsFree;
-    BlockDescriptor():
-    MPrev(NULL),
-    MNext(NULL),
-    MSize(0),
-    MBase(NULL),
-    MIsFree(true)
+    BlockDescriptor() : MPrev(NULL),
+                        MNext(NULL),
+                        MSize(0),
+                        MBase(NULL),
+                        MIsFree(true)
     {
-        
     }
 };
 
 class BlockPool
 {
-public:
-    static BlockPool* FCreate(size_t size);
-    BlockDescriptor* FPopBlock();
-    void FPushBlock(BlockDescriptor* block);
-    
-private:
+  public:
+    static BlockPool *FCreate(size_t size);
+    BlockDescriptor *FPopBlock();
+    void FPushBlock(BlockDescriptor *block);
+
+  private:
     //std::stack<BlockDescriptor*> MPool;
     size_t MSize;
-    BlockDescriptor* MPoolList;
-    BlockDescriptor* MPoolListLast;
+    BlockDescriptor *MPoolList;
+    BlockDescriptor *MPoolListLast;
 };
 
 class HeapAllocator
 {
-public:
-    static HeapAllocator* FCreate(void* base, size_t size, size_t blockNum);
+  public:
+    static HeapAllocator *FCreate(void *base, size_t size, size_t blockNum);
     void FDestroy();
-    void* FAlloc(size_t size);
+    void *FAlloc(size_t size);
     //TODO current useless for me
-    void* FAlloc(size_t size, unsigned int alignment);
-    bool FFree(void* ptr);
+    void *FAlloc(size_t size, unsigned int alignment);
+    bool FFree(void *ptr);
     void FCollect();
-    bool FContains(void* ptr) const;
-    bool FIsAllocated(void* ptr) const;
+    bool FContains(void *ptr) const;
+    bool FIsAllocated(void *ptr) const;
     size_t FGetLargestFreeBlock() const;
     size_t FGetFreeMemory() const;
     size_t Size() const;
-    
-    BlockDescriptor* MFreeList;
-    BlockDescriptor* MFreeListLast;
-    BlockDescriptor* MUsedList;
-    BlockDescriptor* MUsedListLast;
-    
-private:
-    BlockPool* MBlockPool;
-    void FCombineBlock(BlockDescriptor* a, BlockDescriptor* b);
-    void FAddFreeBlockToUsedBlockList(BlockDescriptor* block);
+
+    BlockDescriptor *MFreeList;
+    BlockDescriptor *MFreeListLast;
+    BlockDescriptor *MUsedList;
+    BlockDescriptor *MUsedListLast;
+
+  private:
+    BlockPool *MBlockPool;
+    void FCombineBlock(BlockDescriptor *a, BlockDescriptor *b);
+    void FAddFreeBlockToUsedBlockList(BlockDescriptor *block);
     void FUpdateLargestFreeBlockSize();
-    BlockDescriptor* FFindUsedBlock(void* ptr) const;
-    bool FTryCoalesceTwoBlock(BlockDescriptor* freeblock, BlockDescriptor* addingBlock);
-    void FAddBlockToFreeBlockList(BlockDescriptor* block);
-    
-private:
+    BlockDescriptor *FFindUsedBlock(void *ptr) const;
+    bool FTryCoalesceTwoBlock(BlockDescriptor *freeblock, BlockDescriptor *addingBlock);
+    void FAddBlockToFreeBlockList(BlockDescriptor *block);
+
+  private:
     //HEAP起点的内存地址
-    void* MBasePtr;
+    void *MBasePtr;
     size_t MSize;
     size_t MFreeSize;
     size_t MLargestFreeBlockSize;
 };
-

@@ -1,11 +1,10 @@
 #include "FixedSizeAllocator.hpp"
 #include "HeapAllocator.hpp"
 
-
-FixedSizeAllocator* FixedSizeAllocator::FCreate(HeapAllocator* heapAllocator, size_t blockSize, size_t blockNum)
+FixedSizeAllocator *FixedSizeAllocator::FCreate(HeapAllocator *heapAllocator, size_t blockSize, size_t blockNum)
 {
     //根据块数，单块尺寸初始化内存大小
-    FixedSizeAllocator* allocator = new FixedSizeAllocator();
+    FixedSizeAllocator *allocator = new FixedSizeAllocator();
     allocator->MBlockSize = blockSize;
     allocator->MBlockNum = blockNum;
     allocator->MSize = blockSize * blockNum;
@@ -16,4 +15,3 @@ FixedSizeAllocator* FixedSizeAllocator::FCreate(HeapAllocator* heapAllocator, si
 
     return allocator;
 }
-

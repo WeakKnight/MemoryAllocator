@@ -12,17 +12,18 @@
 #include "Array.hpp"
 #include "HeapManager.hpp"
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char *argv[])
+{
     // //1mb
     // size_t heapSize = 1024 * 1024;
     // void* heapBase = malloc(heapSize);
-    
+
     // HeapAllocator* allocator = HeapAllocator::FCreate(heapBase, heapSize, 100);
     // void* a = allocator->FAlloc(50);
     // void* b = allocator->FAlloc(150);
     // void* c = allocator->FAlloc(250);
     // void* d = allocator->FAlloc(100);
-    
+
     // allocator->FFree(a);
     // allocator->FFree(b);
     // allocator->FFree(c);
@@ -36,7 +37,6 @@ int main(int argc, const char * argv[]) {
     HeapManager::FInitInstance();
     TArray<int> array = TArray<int>(100);
     array[50] = 20;
-    std::cout<<array[50]<<std::endl;
+    std::cout << array[50] << std::endl;
     return 0;
 }
-
