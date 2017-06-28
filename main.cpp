@@ -12,6 +12,7 @@
 #include "Array.hpp"
 #include "HeapManager.hpp"
 #include "Map.hpp"
+#include "sdl/Include/SDL.h"
 
 int main(int argc, const char *argv[])
 {
@@ -31,7 +32,7 @@ int main(int argc, const char *argv[])
     // allocator->FFree(d);
 
     // allocator->FCollect();
-
+    SDL_Init(SDL_INIT_VIDEO);
     // std::cout << "ptr size is "<<sizeof(uintptr_t)<<std::endl;
     // std::cout << "Largest Free Block Size is "<<allocator->FGetLargestFreeBlock()<<std::endl;
     // std::cout << "Free Size is "<<allocator->FGetFreeMemory()<<std::endl;
