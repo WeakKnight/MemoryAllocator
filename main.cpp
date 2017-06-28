@@ -11,6 +11,7 @@
 #include "HeapAllocator.hpp"
 #include "Array.hpp"
 #include "HeapManager.hpp"
+#include "Map.hpp"
 
 int main(int argc, const char *argv[])
 {
@@ -35,8 +36,11 @@ int main(int argc, const char *argv[])
     // std::cout << "Largest Free Block Size is "<<allocator->FGetLargestFreeBlock()<<std::endl;
     // std::cout << "Free Size is "<<allocator->FGetFreeMemory()<<std::endl;
     HeapManager::FInitInstance();
-    TArray<int> array = TArray<int>(100);
-    array[50] = 20;
-    std::cout << array[50] << std::endl;
+    // TArray<int> array = TArray<int>(100);
+    // array[50] = 20;
+    // std::cout << array[50] << std::endl;
+    TMap<char*, unsigned long> map = TMap<char*, unsigned long> ();
+    map.FPut("heihei",20);
+    auto haha = map.FGet("heihei");
     return 0;
 }

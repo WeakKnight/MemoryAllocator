@@ -1,4 +1,7 @@
+#pragma once
+
 #include <stdlib.h>
+#include <assert.h>
 #include "HeapManager.hpp"
 
 template <typename T>
@@ -26,7 +29,7 @@ class TArray
 template <typename T>
 TArray<T>::TArray(size_t capacity)
     : MCapacity(capacity),
-      MSize(0),
+      MSize(capacity),
       MData(NULL)
 {
     MData = reinterpret_cast<T *>(HeapManager::FGetInstance()->FAlloc(capacity * sizeof(T), alignof(T)));

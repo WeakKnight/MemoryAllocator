@@ -79,7 +79,7 @@ bool BitArray::FGetFirstClearBit(size_t& bitNumber) const
 {
     size_t index = 0;
     unsigned char offset = 0;
-    while(index < MByteCount && MBase[index] != 0xFF)
+    while(index < MByteCount && MBase[index] == 0xFF)
     {
         index++;
     }
@@ -105,7 +105,7 @@ bool BitArray::FGetFirstSetBit(size_t& bitNumber) const
 {
     size_t index = 0;
     unsigned char offset = 0;
-    while(index < MByteCount && MBase[index] != 0x00)
+    while(index < MByteCount && MBase[index] == 0x00)
     {
         index++;
     }
